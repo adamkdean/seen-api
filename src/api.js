@@ -27,15 +27,31 @@ const api = {
       config: {
         validate: {
           query: Joi.object({
-            when: Joi.string().default('last_week')
+            when: Joi.string()
+                     .valid(['last_week', 'last_month', 'last_year', 'all_time'])
+                     .default('last_week')
           })
         },
-        handler: (request, reply) => {
+        handler: async (request, reply) => {
           const when = request.query.when;
-          reply([
-            { title: 'test1', 'director': 'Adam', 'popularity': 1.0 },
-            { title: 'test2', 'director': 'Kirsty', 'popularity': 0.7 }
-          ]);
+          const sortOptions = {};
+          sortOptions[`popularity_${when}`] = -1;
+
+          const cursor = await api.db.collection('films').find().sort(sortOptions);
+          const array = [];
+
+          cursor.each((err, doc) => {
+            if (doc === null) return reply(array);
+            array.push({
+              slug: doc.slug,
+              title: doc.title,
+              director: doc.director,
+              score: doc.vote_average,
+              overview: doc.overview,
+              poster_path: doc.poster_path,
+              length: doc.length
+            });
+          });
         }
       }
     },
@@ -45,18 +61,28 @@ const api = {
       config: {
         validate: {
           params: Joi.object({
-            slug: Joi.string()
+            slug: Joi.string().required()
           })
         },
-        handler: (request, reply) => {
-          reply({ 'error': 'Not implemented' })
-            .statusCode(404);
+        handler: async (request, reply) => {
+          const film = await api.db.collection('films').findOne({ slug: request.params.slug });
+
+          if (film === null) return reply({ error: 'Not Found'}).statusCode(404);
+          reply({
+            slug: film.slug,
+            title: film.title,
+            director: film.director,
+            score: film.vote_average,
+            overview: film.overview,
+            poster_path: film.poster_path,
+            length: film.length
+          });
         }
       }
     },
     {
       method: 'GET',
-      path: '/review/{slug}',
+      path: '/reviews/{slug}',
       config: {
         validate: {
           params: Joi.object({
@@ -64,8 +90,7 @@ const api = {
           })
         },
         handler: (request, reply) => {
-          reply({ 'error': 'Not implemented' })
-            .statusCode(404);
+          reply({});
         }
       }
     }

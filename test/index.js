@@ -8,7 +8,7 @@ const expect = chai.expect;
 const assert = chai.assert;
 const GET = (url) => ({ method: 'GET', url });
 
-const requiredFilmProperties = ['title', 'director', 'score', 'length', 'popularity'];
+const requiredFilmProperties = ['slug', 'title', 'director', 'score', 'overview', 'poster_path', 'length'];
 const requiredReviewProperties = ['filmSlug', 'author', 'content', 'popularity'];
 
 //
@@ -103,48 +103,84 @@ describe('GET /film/interstellar', () => {
     })
   );
 
-  // it('should return an object', (done) =>
-  //   server.inject(request, (response) => {
-  //     expect(response.result).to.be.an('object');
-  //     done();
-  //   })
-  // );
-  //
-  // // actually, I really like dynamic tests
-  // requiredFilmProperties.forEach((property) => {
-  //   it(`should contain objects with property ${property}`, (done) =>
-  //     server.inject(request, (response) => {
-  //       expect(response.result).to.have.property(property);
-  //       done();
-  //     })
-  //   );
-  // });
+  it('should return an object', (done) =>
+    server.inject(request, (response) => {
+      expect(response.result).to.be.an('object');
+      done();
+    })
+  );
+
+  // actually, I really like dynamic tests
+  requiredFilmProperties.forEach((property) => {
+    it(`should contain objects with property ${property}`, (done) =>
+      server.inject(request, (response) => {
+        expect(response.result).to.have.property(property);
+        done();
+      })
+    );
+  });
 });
 
-// describe('GET /reviews/interstellar', () => {
-//   const request = GET('/reviews/interstellar');
-//
-//   it('should return http 200', (done) =>
-//     server.inject(request, (response) => {
-//       assert.equal(response.statusCode, 200);
-//       done();
-//     })
-//   );
-//
-//   it('should return an array', (done) =>
-//     server.inject(request, (response) => {
-//       expect(response.result).to.be.an('array');
-//       done();
-//     })
-//   );
-//
-//   // I've decided this is now going to become a thing
-//   requiredReviewProperties.forEach((property) => {
-//     it(`should contain objects with property ${property}`, (done) =>
-//       server.inject(request, (response) => {
-//         expect(response.result).to.all.have.property(property);
-//         done();
-//       })
-//     );
-//   });
-// });
+[
+  '/reviews',
+  '/reviews?when=last_week',
+  '/reviews?when=last_month',
+  '/reviews?when=last_year',
+  '/reviews?when=all_time'
+]
+.forEach((url) => {
+  describe(`GET ${url}`, () => {
+    const request = GET(url);
+
+    it('should return http 200', (done) =>
+      server.inject(request, (response) => {
+        assert.equal(response.statusCode, 200);
+        done();
+      })
+    );
+
+    it('should return an array', (done) =>
+      server.inject(request, (response) => {
+        expect(response.result).to.be.an('array');
+        done();
+      })
+    );
+
+    requiredReviewProperties.forEach((property) => {
+      it(`should contain objects with property ${property}`, (done) =>
+        server.inject(request, (response) => {
+          expect(response.result).to.all.have.property(property);
+          done();
+        })
+      );
+    });
+  });
+});
+
+describe('GET /reviews/interstellar', () => {
+  const request = GET('/reviews/interstellar');
+
+  it('should return http 200', (done) =>
+    server.inject(request, (response) => {
+      assert.equal(response.statusCode, 200);
+      done();
+    })
+  );
+
+  it('should return an array', (done) =>
+    server.inject(request, (response) => {
+      expect(response.result).to.be.an('array');
+      done();
+    })
+  );
+
+  // I've decided this is now going to become a thing
+  requiredReviewProperties.forEach((property) => {
+    it(`should contain objects with property ${property}`, (done) =>
+      server.inject(request, (response) => {
+        expect(response.result).to.all.have.property(property);
+        done();
+      })
+    );
+  });
+});
