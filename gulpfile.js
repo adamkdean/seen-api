@@ -8,6 +8,7 @@ const gulp = require('gulp');
 const babel = require('gulp-babel');
 const lint = require('gulp-eslint');
 const notice = require('gulp-notice');
+const mocha = require('gulp-mocha');
 
 gulp.task('lint', () =>
   gulp.src([
@@ -19,6 +20,11 @@ gulp.task('lint', () =>
   .pipe(lint())
   .pipe(lint.format())
   .pipe(lint.failAfterError())
+);
+
+gulp.task('test', ['transpile'], () =>
+  gulp.src('test/index.js', { read: false })
+    .pipe(mocha({ reporter: 'spec' }))
 );
 
 gulp.task('clean', () => {

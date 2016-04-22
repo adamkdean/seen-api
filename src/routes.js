@@ -1,24 +1,26 @@
-const Joi = require('joi');
-
 const indexRoute = {
   method: 'GET',
   path: '/',
   handler: (request, reply) => {
-    reply({ hello: 'world' });
+    reply({ status: 'OK' });
   }
 };
 
-const testRoute = {
+const filmsRoute = {
   method: 'GET',
-  path: '/test',
+  path: '/films',
   config: {
     handler: (request, reply) => {
-      reply({ name: 'testRoute' });
+      const when = request.query.when || 'last_week';
+      reply([
+        { title: 'test1', 'director': 'Adam', 'popularity': 1.0 },
+        { title: 'test2', 'director': 'Kirsty', 'popularity': 0.7 }
+      ]);
     }
   }
 };
 
 module.exports = exports = [
   indexRoute,
-  testRoute
+  filmsRoute
 ];
