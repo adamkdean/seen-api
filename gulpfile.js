@@ -3,6 +3,8 @@
 
 'use strict';
 
+require('babel-core/register');
+
 const del = require('del');
 const gulp = require('gulp');
 const babel = require('gulp-babel');
@@ -23,8 +25,10 @@ gulp.task('lint', () =>
 );
 
 gulp.task('test', ['transpile'], () =>
-  gulp.src('test/index.js', { read: false })
-    .pipe(mocha({ reporter: 'spec' }))
+  gulp.src('test/index.js', {
+    read: false
+  })
+  .pipe(mocha({ reporter: 'spec' }))
 );
 
 gulp.task('clean', () => {

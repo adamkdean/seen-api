@@ -1,20 +1,10 @@
 const Hapi = require('hapi');
 const server = new Hapi.Server();
-const routes = require('./routes');
+const api = require('./api');
 
 const httpHost = process.env.HTTP_HOST || '0.0.0.0';
 const httpPort = process.env.HTTP_PORT || 8000;
 
-const init = (err) => {
-  if (err) console.error(err);
-
-  console.log('connect to mongodb first?');
-
-  server.start(() => console.log(`Server listening in ${server.info.uri}`));
-};
-
-server.connection({ host: httpHost, port: httpPort });
-server.route(routes);
 server.register({
   register: require('good'),
   options: {
@@ -26,4 +16,12 @@ server.register({
       }
     }]
   }
-}, init);
+}, async (err) => {
+  if (err) console.error(err);
+
+  await api.init();
+
+  server.connection({ host: httpHost, port: httpPort });
+  server.route(api.routes);
+  server.start(() => console.log(`Server listening in ${server.info.uri}`));
+});
