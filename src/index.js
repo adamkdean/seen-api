@@ -21,6 +21,11 @@ server.register({
 
   await api.init();
 
+  process.on('SIGTERM', () => {
+    api.db.close();
+    process.exit(0);
+  });
+
   server.connection({ host: httpHost, port: httpPort });
   server.route(api.routes);
   server.start(() => console.log(`Server listening in ${server.info.uri}`));
