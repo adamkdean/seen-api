@@ -9,7 +9,7 @@ const assert = chai.assert;
 const GET = (url) => ({ method: 'GET', url });
 
 const requiredFilmProperties = ['slug', 'title', 'director', 'score', 'overview', 'poster_path', 'length'];
-const requiredReviewProperties = ['filmSlug', 'author', 'content'];
+const requiredReviewProperties = ['id', 'film_slug', 'film_title', 'poster_path', 'author', 'content', 'summary'];
 
 //
 // Setup

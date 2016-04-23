@@ -2,9 +2,9 @@ require('nomoreunhandledrejections')();
 
 const Joi = require('joi');
 const mongodb = require('mongodb').MongoClient;
+const summarise = (text) => text.substr(0, 300);
 
 const api = {
-
   db: null,
 
   init: async () => {
@@ -102,9 +102,13 @@ const api = {
           cursor.each((err, review) => {
             if (review === null) return reply(array);
             array.push({
-              filmSlug: review.filmSlug,
+              id: review._id,
+              film_slug: review.film_slug,
+              film_title: review.film_title,
+              poster_path: review.poster_path,
               author: review.author,
-              content: review.content
+              content: review.content,
+              summary: summarise(review.content)
             });
           });
         }
@@ -120,15 +124,19 @@ const api = {
           })
         },
         handler: async (request, reply) => {
-          const cursor = await api.db.collection('reviews').find({ filmSlug: request.params.slug });
+          const cursor = await api.db.collection('reviews').find({ film_slug: request.params.slug });
           const array = [];
 
           cursor.each((err, review) => {
             if (review === null) return reply(array);
             array.push({
-              filmSlug: review.filmSlug,
+              id: review._id,
+              film_slug: review.film_slug,
+              film_title: review.film_title,
+              poster_path: review.poster_path,
               author: review.author,
-              content: review.content
+              content: review.content,
+              summary: summarise(review.content)
             });
           });
         }
