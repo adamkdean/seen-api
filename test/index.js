@@ -9,7 +9,7 @@ const assert = chai.assert;
 const GET = (url) => ({ method: 'GET', url });
 
 const requiredFilmProperties = ['slug', 'title', 'director', 'score', 'overview', 'poster_path', 'length'];
-const requiredReviewProperties = ['filmSlug', 'author', 'content', 'popularity'];
+const requiredReviewProperties = ['filmSlug', 'author', 'content'];
 
 //
 // Setup
@@ -85,7 +85,9 @@ describe('GET /', () => {
     requiredFilmProperties.forEach((property) => {
       it(`should contain objects with property ${property}`, (done) =>
         server.inject(request, (response) => {
-          expect(response.result).to.all.have.property(property);
+          expect(response.result)
+            .to.have.length.above(1)
+            .and.to.all.have.property(property);
           done();
         })
       );
@@ -112,9 +114,9 @@ describe('GET /film/interstellar', () => {
 
   // actually, I really like dynamic tests
   requiredFilmProperties.forEach((property) => {
-    it(`should contain objects with property ${property}`, (done) =>
+    it(`should have property ${property}`, (done) =>
       server.inject(request, (response) => {
-        expect(response.result).to.have.property(property);
+        expect(response.result).and.to.have.property(property);
         done();
       })
     );
@@ -149,7 +151,9 @@ describe('GET /film/interstellar', () => {
     requiredReviewProperties.forEach((property) => {
       it(`should contain objects with property ${property}`, (done) =>
         server.inject(request, (response) => {
-          expect(response.result).to.all.have.property(property);
+          expect(response.result)
+            .to.have.length.above(1)
+            .and.to.all.have.property(property);
           done();
         })
       );
@@ -176,9 +180,11 @@ describe('GET /reviews/interstellar', () => {
 
   // I've decided this is now going to become a thing
   requiredReviewProperties.forEach((property) => {
-    it(`should contain objects with property ${property}`, (done) =>
+    it(`should have property ${property}`, (done) =>
       server.inject(request, (response) => {
-        expect(response.result).to.all.have.property(property);
+        expect(response.result)
+          .to.have.length.above(1)
+          .and.to.all.have.property(property);
         done();
       })
     );
