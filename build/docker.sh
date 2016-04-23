@@ -10,5 +10,6 @@ docker run \
   --restart=on-failure:5 \
   --publish 3000:3000 \
   --name api \
+  --env HTTP_PORT=3000 \
   --env MONGODB_URI=$MONGODB_URI \
   quay.io/seenproject/api
